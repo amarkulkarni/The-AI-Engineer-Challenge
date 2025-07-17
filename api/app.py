@@ -30,6 +30,24 @@ class ChatRequest(BaseModel):
     model: str = "gpt-4.1-mini"  # Model selection with default
     api_key: str          # OpenAI API key for authentication
 
+# Define a friendly welcome endpoint at the root path
+@app.get("/")
+async def welcome():
+    return {
+        "message": "🚀 Welcome to the OpenAI Chat API!",
+        "description": "A beautiful FastAPI backend for streaming OpenAI conversations",
+        "status": "✅ Running perfectly!",
+        "endpoints": {
+            "chat": "/api/chat (POST) - Send messages and get streaming responses",
+            "health": "/api/health (GET) - Check API health status",
+            "docs": "/docs - Interactive API documentation",
+            "redoc": "/redoc - Alternative API documentation"
+        },
+        "frontend": "Connect your frontend to this API for real-time AI conversations!",
+        "version": "1.0.0",
+        "made_with": "❤️ FastAPI + OpenAI"
+    }
+
 # Define the main chat endpoint that handles POST requests
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
