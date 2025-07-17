@@ -8,10 +8,16 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  apiBaseUrl: string
+  apiBaseUrl?: string // Made optional since we'll auto-detect
 }
 
 export default function ChatInterface({ apiBaseUrl }: ChatInterfaceProps) {
+  // Auto-detect API base URL
+  const defaultApiBaseUrl = typeof window !== 'undefined' 
+    ? `${window.location.protocol}//${window.location.host}`
+    : 'http://localhost:3000'
+  
+  const effectiveApiBaseUrl = apiBaseUrl || defaultApiBaseUrl
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [developerMessage, setDeveloperMessage] = useState('')
   const [userMessage, setUserMessage] = useState('')
@@ -49,7 +55,7 @@ export default function ChatInterface({ apiBaseUrl }: ChatInterfaceProps) {
     setMessages(prev => [...prev, ...newMessages])
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/chat`, {
+      const response = await fetch(`${effectiveApiBaseUrl}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

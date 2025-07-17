@@ -5,7 +5,8 @@ import HealthStatus from '@/components/HealthStatus'
 import { MessageSquare } from 'lucide-react'
 
 export default function Home() {
-  const [apiBaseUrl, setApiBaseUrl] = useState('http://localhost:8000')
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [customApiBaseUrl, setCustomApiBaseUrl] = useState('')
 
   return (
     <>
@@ -36,29 +37,39 @@ export default function Home() {
               </div>
               
               <div className="flex items-center space-x-4">
-                <div>
+                <button
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className="px-3 py-1 text-sm border border-notion-gray-200 rounded-md bg-white hover:bg-notion-gray-50 transition-colors"
+                >
+                  {showAdvanced ? 'Hide Advanced' : 'Advanced Settings'}
+                </button>
+                <HealthStatus apiBaseUrl={customApiBaseUrl} />
+              </div>
+              
+              {showAdvanced && (
+                <div className="mt-4 p-4 bg-notion-gray-50 rounded-lg">
                   <label className="block text-xs font-medium text-notion-gray-600 mb-1">
-                    API Base URL
+                    Custom API Base URL (optional)
                   </label>
                   <input
                     type="text"
-                    value={apiBaseUrl}
-                    onChange={(e) => setApiBaseUrl(e.target.value)}
-                    className="px-3 py-1 text-sm border border-notion-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-notion-blue-500"
-                    placeholder="http://localhost:8000"
+                    value={customApiBaseUrl}
+                    onChange={(e) => setCustomApiBaseUrl(e.target.value)}
+                    className="w-full px-3 py-1 text-sm border border-notion-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-notion-blue-500"
+                    placeholder="Leave empty to use built-in API"
                   />
+                  <p className="text-xs text-notion-gray-500 mt-1">
+                    By default, the app uses its built-in API endpoints. Only set this if you want to use an external API.
+                  </p>
                 </div>
-                <div className="pt-5">
-                  <HealthStatus apiBaseUrl={apiBaseUrl} />
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </header>
 
         {/* Main Content */}
         <div className="py-8">
-          <ChatInterface apiBaseUrl={apiBaseUrl} />
+          <ChatInterface apiBaseUrl={customApiBaseUrl} />
         </div>
 
         {/* Footer */}
@@ -69,7 +80,7 @@ export default function Home() {
                 Built with Next.js, Tailwind CSS, and inspired by Notion's design.
               </p>
               <p className="mt-1">
-                Connect to your OpenAI Chat API backend for real-time conversations.
+                Unified app with built-in API - just add your OpenAI key and start chatting!
               </p>
             </div>
           </div>

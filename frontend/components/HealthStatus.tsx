@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react'
 import { Activity, AlertCircle } from 'lucide-react'
 
 interface HealthStatusProps {
-  apiBaseUrl: string
+  apiBaseUrl?: string // Made optional since we'll auto-detect
 }
 
 export default function HealthStatus({ apiBaseUrl }: HealthStatusProps) {
+  // Auto-detect API base URL
+  const defaultApiBaseUrl = typeof window !== 'undefined' 
+    ? `${window.location.protocol}//${window.location.host}`
+    : 'http://localhost:3000'
+  
+  const effectiveApiBaseUrl = apiBaseUrl || defaultApiBaseUrl
   const [isHealthy, setIsHealthy] = useState<boolean | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -13,7 +19,7 @@ export default function HealthStatus({ apiBaseUrl }: HealthStatusProps) {
     const checkHealth = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch(`${apiBaseUrl}/api/health`)
+        const response = await fetch(`${effectiveApiBaseUrl}/api/health`)
         const data = await response.json()
         setIsHealthy(data.status === 'ok')
       } catch (error) {
@@ -27,7 +33,7 @@ export default function HealthStatus({ apiBaseUrl }: HealthStatusProps) {
     const interval = setInterval(checkHealth, 30000) // Check every 30 seconds
     
     return () => clearInterval(interval)
-  }, [apiBaseUrl])
+  }, [effectiveApiBaseUrl])
 
   if (isLoading) {
     return (
